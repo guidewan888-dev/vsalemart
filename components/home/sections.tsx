@@ -5,14 +5,16 @@ import { Reveal } from "@/components/motion/reveal";
 import type { HomeCategory, HomePromotion, HomeReview } from "@/types/commerce";
 
 export function HeroSection() {
-  return <section className="bg-[#eef6ff]"><div className="mx-auto grid max-w-[1440px] overflow-hidden lg:grid-cols-[.82fr_1.18fr]">
-    <div className="relative z-10 flex flex-col justify-center px-5 py-9 md:px-10 md:py-12 lg:pl-14 lg:pr-6">
-      <Reveal><h1 className="max-w-xl text-[clamp(2.55rem,4.7vw,4.35rem)] font-extrabold leading-[1.02] tracking-[-.045em] text-[#082653]">ทุกอย่างพร้อม<br/><span className="text-[#0872f5]">ให้ทุกวันไปต่อ</span></h1></Reveal>
-      <Reveal delay={0.07}><p className="mt-3 max-w-xl text-[15px] leading-6 text-[#243f65] md:text-[17px] md:leading-7">เครื่องเขียน หนังสือ แบบฟอร์ม ศิลปะ และอุปกรณ์สำนักงาน<br className="hidden md:block"/> เพื่อการเรียนรู้และการทำงานที่ดีกว่าในทุกวัน</p></Reveal>
-      <Reveal delay={0.14} className="mt-5 flex flex-wrap gap-2.5"><Link href="#products" className="inline-flex min-h-11 items-center gap-3 rounded-full bg-[#0872f5] px-6 text-sm font-bold text-white">เลือกซื้อสินค้า <ArrowRight className="size-4"/></Link><Link href="#new-arrivals" className="inline-flex min-h-11 items-center rounded-full border border-[#0b5fc7] bg-white px-6 text-sm font-bold text-[#095ebf]">ดูสินค้าใหม่</Link></Reveal>
-      <Reveal delay={0.2}><p className="mt-5 w-fit -rotate-2 text-sm font-bold italic text-[#0872f5]">เรื่องเรียน เรื่องงาน ไว้ใจ V SALE</p></Reveal>
+  return <section className="px-4 py-3 md:px-6 md:py-4"><div className="relative mx-auto min-h-[560px] max-w-[1200px] overflow-hidden rounded-2xl border border-[#dfe7f1] bg-white md:min-h-[420px]">
+    <Image src="/images/vsale/hero-home.png" alt="เครื่องเขียน หนังสือ สี และอุปกรณ์สำหรับการเรียนและสำนักงาน" fill priority sizes="(max-width: 767px) 100vw, 1200px" className="object-cover object-[62%_center] md:object-center"/>
+    <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 via-[56%] to-white/5 md:bg-gradient-to-r md:from-white md:via-white/95 md:via-[46%] md:to-transparent"/>
+    <div className="relative z-10 flex min-h-[560px] max-w-[610px] flex-col px-5 pt-8 md:min-h-[420px] md:justify-center md:px-11 md:py-8">
+      <p className="text-[11px] font-extrabold tracking-[.16em] text-[#0872f5]">V SALE · GOOD TOOLS, GREAT DAYS</p>
+      <h1 className="mt-3 text-[clamp(2.5rem,4.5vw,4rem)] font-extrabold leading-[1.02] tracking-[-.045em] text-[#082653]">ทุกอย่างพร้อม<br/><span className="text-[#0872f5]">ให้ทุกวันไปต่อ</span></h1>
+      <p className="mt-3 max-w-lg text-[15px] leading-6 text-[#334f72] md:text-base">เครื่องเขียน หนังสือ แบบฟอร์ม ศิลปะ และอุปกรณ์สำนักงาน เพื่อการเรียนรู้และการทำงานที่ดีกว่าในทุกวัน</p>
+      <div className="mt-5 flex flex-wrap gap-2.5"><Link href="#products" className="inline-flex min-h-11 items-center gap-3 rounded-full bg-[#0872f5] px-6 text-sm font-bold text-white">เลือกซื้อสินค้า <ArrowRight className="size-4"/></Link><Link href="#new-arrivals" className="inline-flex min-h-11 items-center rounded-full border border-[#bfd0e5] bg-white/90 px-6 text-sm font-bold text-[#082653]">ดูสินค้าใหม่</Link></div>
+      <p className="mt-5 text-xs font-bold text-[#46617f]">ครบเรื่องเรียน · พร้อมเรื่องงาน · จัดส่งทั่วไทย</p>
     </div>
-    <Reveal className="relative min-h-[290px] md:min-h-[360px] lg:min-h-[430px]"><Image src="/images/vsale/hero-home.png" alt="เครื่องเขียน หนังสือ สี และอุปกรณ์สำหรับการเรียนและสำนักงาน" fill priority sizes="(max-width: 1023px) 100vw, 60vw" className="object-cover object-center"/></Reveal>
   </div></section>;
 }
 
