@@ -25,7 +25,7 @@ export default async function HomePage() {
     <Script id="organization-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}/>
     {productLd ? <Script id="products-jsonld" type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(productLd) }}/> : null}
     <AnnouncementBar/><SiteHeader products={data.products} categories={data.categories}/>
-    <main id="top">
+    <main id="top" className="site-main">
       <HeroSection/><CategoryGrid categories={data.categories}/><TrustBenefits/>
       <PromotionGrid promotions={data.promotions}/>
       <FlashSaleSection products={flashSale.length ? flashSale : data.products.slice(0, 6)}/>

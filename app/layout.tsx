@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Noto_Sans_Thai } from "next/font/google";
+import { IBM_Plex_Sans_Thai, Noto_Sans_Thai } from "next/font/google";
 import "./globals.css";
 
 const notoThai = Noto_Sans_Thai({ subsets: ["thai", "latin"], variable: "--font-noto-thai", display: "swap" });
+const plexThai = IBM_Plex_Sans_Thai({ subsets: ["thai", "latin"], weight: ["500", "600", "700"], variable: "--font-plex-thai", display: "swap" });
 const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://vsalemart.com";
 
 export const metadata: Metadata = {
@@ -15,4 +16,4 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#146ef5" };
-export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="th" className={notoThai.variable}><body>{children}</body></html>; }
+export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="th" className={`${notoThai.variable} ${plexThai.variable}`}><body>{children}</body></html>; }
