@@ -21,25 +21,18 @@
 
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; overflow-x: clip; }
-body { margin: 0; overflow-x: clip; background: #f5f9ff; color: #0a1d40; font-family: var(--font-noto-thai), Tahoma, Arial, sans-serif; font-size: 16px; }
+body { margin: 0; overflow-x: clip; background: #ffffff; color: #0a1d40; font-family: var(--font-noto-thai), Tahoma, Arial, sans-serif; font-size: 16px; }
 h1, h2, h3, .font-display { font-family: var(--font-plex-thai), var(--font-noto-thai), Tahoma, sans-serif; }
-.site-main { position: relative; isolation: isolate; background:
-  radial-gradient(circle at 8% 12%, rgb(98 156 255 / 13%), transparent 24rem),
-  radial-gradient(circle at 92% 38%, rgb(255 112 89 / 10%), transparent 26rem),
-  linear-gradient(180deg, #ffffff 0%, #f6f9ff 38%, #ffffff 72%, #eef5ff 100%);
-}
-.site-main::before { content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: .24; background-image: radial-gradient(#7fa8e8 1px, transparent 1px); background-size: 24px 24px; mask-image: linear-gradient(to bottom, transparent 8%, #000 26%, transparent 58%); }
+.site-main { background: #ffffff; }
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 button, select { cursor: pointer; }
 :focus-visible { outline: 3px solid #146ef5; outline-offset: 3px; }
-.section-pad { padding-block: clamp(3.25rem, 5.5vw, 5.5rem); }
+.section-pad, .compact-section { padding-block: clamp(1.25rem, 1.8vw, 1.75rem); }
 .product-rail, .category-rail { scrollbar-width: none; }
 .product-rail::-webkit-scrollbar, .category-rail::-webkit-scrollbar { display: none; }
 .announcement-track { animation: announcement 24s linear infinite; }
-.hero-float { animation: hero-float 6s ease-in-out infinite; }
 .flash-shell { background: linear-gradient(132deg, #071c42 0%, #0b4bc3 62%, #1679ef 100%); }
 @keyframes announcement { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-@keyframes hero-float { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-7px); } }
 @media (min-width: 48rem) { .announcement-track { width: 100%; justify-content: center; animation: none; } }
 @media (hover: hover) { a, button { transition: color .2s ease, background-color .2s ease, border-color .2s ease, transform .2s ease, opacity .2s ease; } }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; } }
