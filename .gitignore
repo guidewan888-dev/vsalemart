@@ -6,3 +6,5 @@ node_modules/
 !.env.example
 *.tsbuildinfo
 .vercel/
+/vsale-codex-handoff (1)/
+/vsale-codex-handoff (1).zip
