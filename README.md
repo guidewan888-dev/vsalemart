@@ -13,7 +13,7 @@ Thai ecommerce storefront for school supplies, books, forms, art materials, and 
 
 The homepage reads categories, products, promotions, and reviews through `lib/commerce/home.ts`. When Supabase is unavailable or contains no products, it falls back to the 12 clearly marked demo products in `src/data/demo-products.ts`.
 
-The migration in `supabase/migrations` creates the commerce schema, row level security policies, indexes, profile trigger, newsletter table, and idempotent starter records. Demo product images live in `public/images/vsale/products/demo`; replace their paths with Supabase Storage URLs when real catalog images are available.
+The migrations in `supabase/migrations` create the commerce schema, row level security policies, indexes, profile trigger, newsletter table, a public-read `product-images` Storage bucket, and idempotent starter records. Demo product images live in `public/images/vsale/products/demo`; replace their paths with Supabase Storage URLs when real catalog images are available. Uploads to the bucket remain restricted to trusted dashboard or server-side administration.
 
 Guest cart and favorites use local storage. Signed-in cart changes also sync to Supabase. `/account` provides passwordless magic-link sign-in. The checkout button is the prepared storefront boundary; order placement and payment provider integration are the next backend phase.
 
