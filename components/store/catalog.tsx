@@ -403,6 +403,17 @@ export function Catalog({
     favoritesOnly,
   ]);
   let visible = items;
+  function updateCategory(nextCategory: string) {
+    setCategory(nextCategory);
+    setPage(1);
+    scrollPageTop();
+  }
+
+  function updatePage(nextPage: number) {
+    setPage(nextPage);
+    scrollPageTop();
+  }
+
   if (data.source === "demo" || favoritesOnly) {
     visible = [
       ...new Map(
@@ -447,10 +458,7 @@ export function Catalog({
                 type="button"
                 className={`filter-option${category === "" ? " active" : ""}`}
                 aria-pressed={category === ""}
-                onClick={() => {
-                  setCategory("");
-                  setPage(1);
-                }}
+                onClick={() => updateCategory("")}
               >
                 ทุกหมวดหมู่
               </button>
@@ -460,10 +468,7 @@ export function Catalog({
                   className={`filter-option${category === c.slug ? " active" : ""}`}
                   aria-pressed={category === c.slug}
                   key={c.id}
-                  onClick={() => {
-                    setCategory(c.slug);
-                    setPage(1);
-                  }}
+                  onClick={() => updateCategory(c.slug)}
                 >
                   {c.name}
                 </button>
@@ -474,7 +479,11 @@ export function Catalog({
             <input
               type="checkbox"
               checked={inStock}
-              onChange={(e) => setInStock(e.target.checked)}
+              onChange={(e) => {
+                setInStock(e.target.checked);
+                setPage(1);
+                scrollPageTop();
+              }}
             />
             เฉพาะสินค้าพร้อมขาย
           </label>
@@ -486,6 +495,7 @@ export function Catalog({
               setSort("popular");
               setInStock(false);
               setPage(1);
+              scrollPageTop();
             }}
           >
             ล้างตัวกรอง
@@ -512,6 +522,7 @@ export function Catalog({
               onChange={(e) => {
                 setSort(e.target.value);
                 setPage(1);
+                scrollPageTop();
               }}
             >
               <option value="popular">แนะนำ</option>
@@ -548,11 +559,23 @@ export function Catalog({
             page={page}
             total={total}
             pageSize={24}
-            onChange={setPage}
+            onChange={updatePage}
           />
         )}
       </div>
     </div>
+  );
+}
+
+function scrollPageTop() {
+  requestAnimationFrame(() =>
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+        ? "auto"
+        : "smooth",
+    }),
   );
 }
 type Variant = { id: string; name: string; price: number; stock: number };
