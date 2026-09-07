@@ -478,6 +478,155 @@ export function ProductManagement({ initialQ = "" }: { initialQ?: string }) {
     </div>
   );
 }
+
+export function PromotionManagement() {
+  const [mode, setMode] = useState<"active" | "all">("active");
+  const [q, setQ] = useState("");
+  const [page, setPage] = useState(1);
+  const [message, setMessage] = useState("");
+  const path =
+    "admin/products?page=" +
+    page +
+    "&q=" +
+    encodeURIComponent(q) +
+    (mode === "active" ? "&promotion=true" : "");
+  const { data, error, busy, reload } = useData(path);
+  const rows = data?.data ?? [];
+
+  async function toggle(product: Row) {
+    setMessage("");
+    const enabled = !product.is_flash_sale;
+    await api("admin/products/" + product.id, {
+      is_flash_sale: enabled,
+      ...(enabled && !product.badge ? { badge: "recommended" } : {}),
+    });
+    setMessage(enabled ? "เพิ่มสินค้าเข้าโปรโมชั่นแล้ว" : "นำสินค้าออกจากโปรโมชั่นแล้ว");
+    reload();
+  }
+
+  return (
+    <div className="stack promotion-admin">
+      <section className="panel promotion-admin-hero">
+        <div>
+          <p className="eyebrow">PROMOTION PRODUCTS</p>
+          <h2>สินค้าโปรโมชั่นหน้าร้าน</h2>
+          <p className="small muted">
+            เลือกสินค้าที่ต้องการแสดงทั้งหน้าแรกและหน้าโปรโมชั่น
+            ราคาใช้ราคาขายจริงของสินค้า
+          </p>
+        </div>
+        <AsyncButton
+          className="btn"
+          run={async () => {
+            const result = await api("admin/promotion-starter", {});
+            setMode("active");
+            setPage(1);
+            setMessage(
+              result.count
+                ? `เพิ่มสินค้าแนะนำ ${result.count} รายการแล้ว`
+                : "สินค้าที่พร้อมขายถูกกำหนดเป็นโปรโมชั่นแล้ว",
+            );
+            reload();
+          }}
+        >
+          จัดชุดโปรโมชั่นเริ่มต้น 10 รายการ
+        </AsyncButton>
+      </section>
+      <section className="panel">
+        <div className="section-head promotion-admin-tools">
+          <div className="tabs" aria-label="ตัวกรองสินค้าโปรโมชั่น">
+            <button
+              className={mode === "active" ? "active" : ""}
+              onClick={() => {
+                setMode("active");
+                setPage(1);
+              }}
+            >
+              กำลังแสดง ({mode === "active" ? (data?.total ?? 0) : "ดูรายการ"})
+            </button>
+            <button
+              className={mode === "all" ? "active" : ""}
+              onClick={() => {
+                setMode("all");
+                setPage(1);
+              }}
+            >
+              เลือกจากสินค้าทั้งหมด
+            </button>
+          </div>
+          <input
+            aria-label="ค้นหาสินค้าที่จะทำโปรโมชั่น"
+            type="search"
+            placeholder="ค้นหาชื่อสินค้า"
+            value={q}
+            onChange={(event) => {
+              setQ(event.target.value);
+              setPage(1);
+            }}
+          />
+        </div>
+        {message && <p className="alert success">{message}</p>}
+        {error && <p className="alert error">{error}</p>}
+        {busy ? (
+          <div className="skeleton" />
+        ) : rows.length ? (
+          <div className="promotion-admin-list">
+            {rows.map((product: Row) => (
+              <article className="promotion-admin-item" key={product.id}>
+                <img src={product.cover_image} alt="" />
+                <div className="promotion-admin-copy">
+                  <h3>{product.name}</h3>
+                  <p>
+                    <strong>{money(product.price)}</strong>
+                    <span className="muted small">คงเหลือ {product.stock}</span>
+                  </p>
+                </div>
+                <span className={product.is_flash_sale ? "promo-state on" : "promo-state"}>
+                  {product.is_flash_sale ? "กำลังแสดง" : "ยังไม่แสดง"}
+                </span>
+                <AsyncButton
+                  className={product.is_flash_sale ? "btn ghost" : "btn"}
+                  run={() => toggle(product)}
+                >
+                  {product.is_flash_sale ? "นำออก" : "เพิ่มเข้าโปรโมชั่น"}
+                </AsyncButton>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <Empty
+            title={mode === "active" ? "ยังไม่มีสินค้าโปรโมชั่น" : "ไม่พบสินค้า"}
+            description={
+              mode === "active"
+                ? "กดจัดชุดโปรโมชั่นเริ่มต้น หรือเลือกจากสินค้าทั้งหมด"
+                : "ลองค้นหาด้วยชื่อสินค้าอื่น"
+            }
+          />
+        )}
+        {(data?.total ?? 0) > 30 && (
+          <div className="row promotion-admin-pages">
+            <button className="btn ghost" disabled={page <= 1} onClick={() => setPage((value) => value - 1)}>
+              ← ก่อนหน้า
+            </button>
+            <span>หน้า {page}</span>
+            <button
+              className="btn ghost"
+              disabled={page * 30 >= Number(data?.total ?? 0)}
+              onClick={() => setPage((value) => value + 1)}
+            >
+              ถัดไป →
+            </button>
+          </div>
+        )}
+      </section>
+      <section>
+        <h2>คูปองส่วนลด</h2>
+        <p className="small muted">สร้างรหัสคูปองและกำหนดช่วงเวลาที่ลูกค้าใช้ได้</p>
+        <ResourceView name="promotions" admin />
+      </section>
+    </div>
+  );
+}
 export function ImportPage() {
   return (
     <div className="stack">

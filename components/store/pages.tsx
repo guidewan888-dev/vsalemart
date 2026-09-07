@@ -29,6 +29,7 @@ import {
   Inventory,
   AdminDetail,
   ProductManagement,
+  PromotionManagement,
   ImportPage,
 } from "./admin";
 import { api } from "@/lib/store/client";
@@ -470,6 +471,7 @@ export function StorePage({
     else if (name === "settings") inner = <Settings />;
     else if (name === "inventory") inner = <Inventory />;
     else if (name === "import") inner = <ImportPage />;
+    else if (name === "promotions") inner = <PromotionManagement />;
     else if (name === "products")
       inner =
         id === "new" ? (

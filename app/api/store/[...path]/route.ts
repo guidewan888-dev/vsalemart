@@ -248,6 +248,27 @@ async function handle(
         if (error) throw error;
         return response({ ok: true });
       }
+      if (admin && path[1] === "promotion-starter") {
+        const { data: candidates, error: candidateError } = await db
+          .from("products")
+          .select("id")
+          .eq("is_active", true)
+          .eq("is_demo", false)
+          .gt("stock", 0)
+          .eq("is_flash_sale", false)
+          .order("sold_count", { ascending: false, nullsFirst: false })
+          .order("price", { ascending: true })
+          .limit(10);
+        if (candidateError) throw candidateError;
+        const ids = (candidates ?? []).map((item) => item.id);
+        if (!ids.length) return response({ ok: true, count: 0 });
+        const { error } = await db
+          .from("products")
+          .update({ is_flash_sale: true, badge: "recommended" })
+          .in("id", ids);
+        if (error) throw error;
+        return response({ ok: true, count: ids.length });
+      }
       if (path[0] === "quotes") {
         if (!Array.isArray(body.items) || !body.items.length)
           throw new Error("กรุณาเลือกสินค้า");
@@ -344,6 +365,12 @@ async function handle(
         query = query.in("status", ["paid", "packing", "shipped", "completed"]);
       const status = req.nextUrl.searchParams.get("status");
       if (status) query = query.eq("status", status);
+      if (
+        admin &&
+        name === "products" &&
+        req.nextUrl.searchParams.get("promotion") === "true"
+      )
+        query = query.eq("is_flash_sale", true);
       const search = req.nextUrl.searchParams
         .get("q")
         ?.replace(/[%_]/g, "")
@@ -353,10 +380,10 @@ async function handle(
           name === "customers" ? "display_name" : "name",
           "%" + search + "%",
         );
+      if (admin && name === "products")
+        query = query.order("is_flash_sale", { ascending: false });
       const { data, error, count } = await query
-        .order(name === "import" ? "started_at" : "created_at", {
-          ascending: false,
-        })
+        .order(name === "import" ? "started_at" : "created_at", { ascending: false })
         .range((page - 1) * 30, page * 30 - 1);
       if (error) throw error;
       return response({

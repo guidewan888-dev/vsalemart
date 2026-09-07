@@ -16,6 +16,12 @@ export function Home() {
   const [total, setTotal] = useState(data.products.length);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const [promotionItems, setPromotionItems] = useState(
+    data.products.filter((product) => product.isFlashSale).slice(0, 10),
+  );
+  const [promotionTotal, setPromotionTotal] = useState(
+    data.products.filter((product) => product.isFlashSale).length,
+  );
   const selectedCategory = data.categories.find((c) => c.slug === category);
   const demoProducts = category
     ? data.products.filter((product) => product.categorySlug === category)
@@ -63,6 +69,24 @@ export function Home() {
       ctrl.abort();
     };
   }, [category, page, data.products, data.source]);
+
+  useEffect(() => {
+    if (data.source === "demo") return;
+    const ctrl = new AbortController();
+    fetch("/api/products?promotion=true&inStock=true&limit=10&page=1", {
+      signal: ctrl.signal,
+    })
+      .then((response) => response.json())
+      .then((result) => {
+        if (result.error) throw new Error(result.error);
+        setPromotionItems(result.data.map(convert));
+        setPromotionTotal(result.pagination.total);
+      })
+      .catch((caught) => {
+        if (caught.name !== "AbortError") console.error(caught);
+      });
+    return () => ctrl.abort();
+  }, [data.source]);
 
   function showCategory(slug: string) {
     setCategory(slug);
@@ -134,6 +158,25 @@ export function Home() {
           onSelect={showCategory}
         />
       </section>
+      {promotionItems.length > 0 && (
+        <section className="section promotion-showcase" id="home-promotions">
+          <div className="promotion-heading">
+            <div>
+              <p className="eyebrow">V SALE PICKS</p>
+              <h2>โปรโมชั่นที่เลือกมาให้</h2>
+              <p>สินค้าพร้อมขายที่ร้านคัดไว้ {promotionTotal.toLocaleString("th-TH")} รายการ</p>
+            </div>
+            <Link className="btn secondary" href="/promotions">
+              ดูโปรโมชั่นทั้งหมด →
+            </Link>
+          </div>
+          <div className="products">
+            {promotionItems.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
       <section className="section home-products" id="home-products">
         <div className="section-head">
           <div>
@@ -309,6 +352,15 @@ function Pagination({
 }
 function convert(row: Record<string, unknown>): HomeProduct {
   const c = row.category as { slug: string; name: string } | null;
+  const badge = row.badge as HomeProduct["badge"];
+  const badgeLabels: Record<string, string> = {
+    sale: "ลดราคา",
+    new: "สินค้าใหม่",
+    bestseller: "ขายดี",
+    ready: "พร้อมส่ง",
+    recommended: "โปรโมชั่น",
+    value: "คุ้มค่า",
+  };
   return {
     id: String(row.id),
     slug: String(row.slug),
@@ -329,6 +381,8 @@ function convert(row: Record<string, unknown>): HomeProduct {
     inStock: Number(row.stock) > 0,
     categorySlug: c?.slug ?? "",
     categoryName: c?.name ?? "สินค้า",
+    badge,
+    badgeLabel: badge ? badgeLabels[badge] : row.flashSale ? "โปรโมชั่น" : null,
     isFeatured: !!row.featured,
     isFlashSale: !!row.flashSale,
     isDemo: !!row.isDemo,
