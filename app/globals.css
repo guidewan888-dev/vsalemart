@@ -228,6 +228,10 @@ legend {
   font-size: 14px;
   overflow: auto;
   white-space: nowrap;
+  scrollbar-width: none;
+}
+.nav::-webkit-scrollbar {
+  display: none;
 }
 .nav a:hover {
   text-decoration: underline;

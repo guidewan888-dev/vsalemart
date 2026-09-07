@@ -27,19 +27,24 @@ export async function GET(request: NextRequest) {
         { count: "exact" },
       )
       .eq("is_active", true)
-      .order("is_featured", { ascending: false })
-      .order("stock", { ascending: false })
-      .order("name", { ascending: true })
-      .range(from, to);
+      .eq("is_demo", false);
 
-    const sort=request.nextUrl.searchParams.get('sort');
-    if(sort==='price-asc'||sort==='price-desc') query=supabase.from('products').select('id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name)',{count:'exact'}).eq('is_active',true).order('price',{ascending:sort==='price-asc'}).range(from,to);
-    if(request.nextUrl.searchParams.get('inStock')==='true')query=query.gt('stock',0);
-    if(request.nextUrl.searchParams.get('promotion')==='true')query=query.eq('is_flash_sale',true);
+    const sort = request.nextUrl.searchParams.get("sort");
+    query =
+      sort === "price-asc" || sort === "price-desc"
+        ? query.order("price", { ascending: sort === "price-asc" })
+        : query
+            .order("is_featured", { ascending: false })
+            .order("stock", { ascending: false })
+            .order("name", { ascending: true });
+    if (request.nextUrl.searchParams.get("inStock") === "true")
+      query = query.gt("stock", 0);
+    if (request.nextUrl.searchParams.get("promotion") === "true")
+      query = query.eq("is_flash_sale", true);
     if (search) query = query.ilike("name", `%${search.replaceAll("%", "").replaceAll("_", "")}%`);
     if (category) query = query.eq("categories.slug", category);
 
-    const { data, error, count } = await query;
+    const { data, error, count } = await query.range(from, to);
     if (error) throw error;
 
     const total = count ?? 0;

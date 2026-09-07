@@ -13,7 +13,8 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
       .select(
         "id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories(slug,name),product_images(url,alt_text,sort_order),product_variants(id,source_variant_id,name,sku,price,stock,gtin,weight_kg,length_cm,width_cm,height_cm,minimum_purchase_quantity,maximum_purchase_quantity,shipping_options)",
       )
-      .eq("is_active", true);
+      .eq("is_active", true)
+      .eq("is_demo", false);
 
     query = UUID_PATTERN.test(id) ? query.eq("id", id) : query.eq("slug", id);
     const { data, error } = await query.maybeSingle();

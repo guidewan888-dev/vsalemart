@@ -232,9 +232,18 @@ async function handle(
           throw new Error(
             "กรอกข้อมูลร้าน บัญชีรับเงิน และภาษีก่อนเปิดรับออเดอร์",
           );
+        const { data: current, error: readError } = await db
+          .from("store_settings")
+          .select("value")
+          .eq("id", "store")
+          .single();
+        if (readError) throw readError;
         const { error } = await db
           .from("store_settings")
-          .update({ value, updated_at: new Date().toISOString() })
+          .update({
+            value: { ...(current.value ?? {}), ...value },
+            updated_at: new Date().toISOString(),
+          })
           .eq("id", "store");
         if (error) throw error;
         return response({ ok: true });

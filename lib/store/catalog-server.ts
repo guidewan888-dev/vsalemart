@@ -12,6 +12,7 @@ export const getProductBySlug = cache(async (slug: string) => {
     )
     .eq("slug", slug)
     .eq("is_active", true)
+    .eq("is_demo", false)
     .maybeSingle();
   if (error) throw new Error("ไม่สามารถโหลดสินค้าได้");
   return data;
