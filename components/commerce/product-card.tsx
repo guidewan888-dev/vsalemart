@@ -9,13 +9,13 @@ import type { HomeProduct } from "@/types/commerce";
 
 const money = new Intl.NumberFormat("th-TH", { style: "currency", currency: "THB", maximumFractionDigits: 0 });
 const artTones: Record<string, string> = {
-  "forms-documents": "from-[#eef6ff] to-[#dcecff]",
-  "books-workbooks": "from-[#fff8dc] to-[#ffe9a9]",
-  stationery: "from-[#fff0ec] to-[#ffd9d0]",
-  "art-craft": "from-[#edfff9] to-[#cef4e7]",
-  "tape-adhesive": "from-[#f5f0ff] to-[#e4d8ff]",
-  "office-supplies": "from-[#eef2ff] to-[#dbe4ff]",
-  "flags-ceremony": "from-[#fff0f2] to-[#dfeaff]",
+  "forms-documents": "from-[#e7f3ff] to-[#cbe4ff]",
+  "books-workbooks": "from-[#fff6c7] to-[#ffe36c]",
+  stationery: "from-[#ffe9e3] to-[#ffc4b8]",
+  "art-craft": "from-[#e3fff7] to-[#b7f1de]",
+  "tape-adhesive": "from-[#f1ebff] to-[#d7c8ff]",
+  "office-supplies": "from-[#e7edff] to-[#c8d6ff]",
+  "flags-ceremony": "from-[#ffe4e9] to-[#cfe2ff]",
 };
 
 export function ProductCard({ product }: { product: HomeProduct }) {
@@ -23,7 +23,7 @@ export function ProductCard({ product }: { product: HomeProduct }) {
   const [failed, setFailed] = useState(false);
   const discount = product.compareAtPrice && product.compareAtPrice > product.price ? Math.round((1 - product.price / product.compareAtPrice) * 100) : 0;
   const liked = favorites.has(product.id);
-  const artTone = artTones[product.categorySlug] ?? "from-[#f2f7ff] to-[#e5efff]";
+  const artTone = artTones[product.categorySlug] ?? "from-[#eaf4ff] to-[#d2e7ff]";
 
   return <m.article data-product-card className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#dfe8f5] bg-white shadow-[0_5px_16px_rgba(16,52,101,.06)]" whileHover={{ y: -3 }} transition={{ duration: 0.18 }}>
     <div className={`relative aspect-[4/3] overflow-hidden bg-gradient-to-br ${artTone}`}>
@@ -31,7 +31,7 @@ export function ProductCard({ product }: { product: HomeProduct }) {
       <button type="button" onClick={() => toggleFavorite(product.id)} aria-label={liked ? `นำ ${product.name} ออกจากรายการโปรด` : `เพิ่ม ${product.name} ในรายการโปรด`} aria-pressed={liked} className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full border border-[#dce6f4] bg-white/95 text-[#092653] shadow-sm sm:size-9">
         <Heart className={`size-4 ${liked ? "fill-[#ff5148] text-[#ff5148]" : ""}`}/>
       </button>
-      <Image src={failed ? "/images/vsale/products/demo/product-placeholder.svg" : product.image.src} alt={product.image.alt} fill sizes="(max-width: 639px) 50vw, (max-width: 1023px) 28vw, 210px" className="object-contain p-3 transition-transform duration-300 group-hover:scale-[1.04]" onError={() => setFailed(true)}/>
+      <Image src={failed ? "/images/vsale/products/demo/product-placeholder.svg" : product.image.src} alt={product.image.alt} fill sizes="(max-width: 639px) 50vw, (max-width: 1023px) 28vw, 210px" className="object-contain p-3 saturate-[1.15] contrast-[1.03] transition-transform duration-300 group-hover:scale-[1.04]" onError={() => setFailed(true)}/>
       {product.isDemo && <span className="absolute bottom-2 right-2 z-10 inline-flex items-center gap-1 rounded-full bg-[#092653]/88 px-2 py-1 text-[9px] font-semibold text-white"><Sparkles className="size-2.5"/>ภาพตัวอย่าง</span>}
       {!product.inStock && <div className="absolute inset-0 z-20 grid place-items-center bg-white/80"><span className="rounded-full bg-[#092653] px-3 py-1.5 text-xs font-bold text-white">สินค้าหมด</span></div>}
     </div>

@@ -7,7 +7,7 @@
   --surface-blue: 216 100% 96%;
   --foreground: 224 65% 12%;
   --muted-foreground: 220 12% 42%;
-  --primary: 216 92% 52%;
+  --primary: 215 100% 50%;
   --sale: 6 100% 64%;
   --border: 220 22% 90%;
   --ring: 216 92% 52%;
@@ -25,6 +25,8 @@ html { scroll-behavior: smooth; overflow-x: clip; }
 body { margin: 0; overflow-x: clip; background: #ffffff; color: #0a1d40; font-family: var(--font-noto-thai), Tahoma, Arial, sans-serif; font-size: 16px; }
 h1, h2, h3, .font-display { font-family: var(--font-plex-thai), var(--font-noto-thai), Tahoma, sans-serif; }
 .site-main { background: #ffffff; }
+.site-main img { filter: saturate(1.12) contrast(1.025); }
+.site-main img.hero-vivid { filter: saturate(1.24) contrast(1.055) brightness(1.035); }
 .max-w-\[1320px\], .max-w-\[1360px\], .max-w-\[1440px\] {
   width: calc(100% - 2rem);
   max-width: var(--content-width);
@@ -32,7 +34,7 @@ h1, h2, h3, .font-display { font-family: var(--font-plex-thai), var(--font-noto-
 }
 button, a, input, select { -webkit-tap-highlight-color: transparent; }
 button, select { cursor: pointer; }
-:focus-visible { outline: 3px solid #146ef5; outline-offset: 3px; }
+:focus-visible { outline: 3px solid #006cff; outline-offset: 3px; }
 .section-pad, .compact-section { padding-block: clamp(1.25rem, 1.8vw, 1.75rem); }
 .product-rail, .category-rail { scrollbar-width: none; }
 .product-rail::-webkit-scrollbar, .category-rail::-webkit-scrollbar { display: none; }

@@ -5,14 +5,14 @@ import { Reveal } from "@/components/motion/reveal";
 import type { HomeCategory, HomePromotion, HomeReview } from "@/types/commerce";
 
 export function HeroSection() {
-  return <section className="px-4 py-3 md:px-6 md:py-4"><div className="relative mx-auto min-h-[560px] max-w-[1200px] overflow-hidden rounded-2xl border border-[#dfe7f1] bg-white md:min-h-[420px]">
-    <Image src="/images/vsale/hero-home.png" alt="เครื่องเขียน หนังสือ สี และอุปกรณ์สำหรับการเรียนและสำนักงาน" fill priority sizes="(max-width: 767px) 100vw, 1200px" className="object-cover object-[62%_center] md:object-center"/>
-    <div className="absolute inset-0 bg-gradient-to-b from-white via-white/95 via-[56%] to-white/5 md:bg-gradient-to-r md:from-white md:via-white/95 md:via-[46%] md:to-transparent"/>
+  return <section className="px-4 py-3 md:px-6 md:py-4"><div className="relative mx-auto min-h-[560px] max-w-[1200px] overflow-hidden rounded-2xl border border-[#c9ddf7] bg-white shadow-[0_10px_30px_rgba(0,108,255,.08)] md:min-h-[420px]">
+    <Image src="/images/vsale/hero-home.png" alt="เครื่องเขียน หนังสือ สี และอุปกรณ์สำหรับการเรียนและสำนักงาน" fill priority sizes="(max-width: 767px) 100vw, 1200px" className="hero-vivid object-cover object-[62%_center] md:object-center"/>
+    <div className="absolute inset-0 bg-gradient-to-b from-white via-white/88 via-[48%] to-white/5 md:bg-gradient-to-r md:from-white md:via-white/88 md:via-[38%] md:to-transparent"/>
     <div className="relative z-10 flex min-h-[560px] max-w-[610px] flex-col px-5 pt-8 md:min-h-[420px] md:justify-center md:px-11 md:py-8">
-      <p className="text-[11px] font-extrabold tracking-[.16em] text-[#0872f5]">V SALE · GOOD TOOLS, GREAT DAYS</p>
-      <h1 className="mt-3 text-[clamp(2.5rem,4.5vw,4rem)] font-extrabold leading-[1.02] tracking-[-.045em] text-[#082653]">ทุกอย่างพร้อม<br/><span className="text-[#0872f5]">ให้ทุกวันไปต่อ</span></h1>
+      <p className="text-[11px] font-extrabold tracking-[.16em] text-[#006cff]">V SALE · GOOD TOOLS, GREAT DAYS</p>
+      <h1 className="mt-3 text-[clamp(2.5rem,4.5vw,4rem)] font-extrabold leading-[1.02] tracking-[-.045em] text-[#062755]">ทุกอย่างพร้อม<br/><span className="text-[#006cff]">ให้ทุกวันไปต่อ</span></h1>
       <p className="mt-3 max-w-lg text-[15px] leading-6 text-[#334f72] md:text-base">เครื่องเขียน หนังสือ แบบฟอร์ม ศิลปะ และอุปกรณ์สำนักงาน เพื่อการเรียนรู้และการทำงานที่ดีกว่าในทุกวัน</p>
-      <div className="mt-5 flex flex-wrap gap-2.5"><Link href="#products" className="inline-flex min-h-11 items-center gap-3 rounded-full bg-[#0872f5] px-6 text-sm font-bold text-white">เลือกซื้อสินค้า <ArrowRight className="size-4"/></Link><Link href="#new-arrivals" className="inline-flex min-h-11 items-center rounded-full border border-[#bfd0e5] bg-white/90 px-6 text-sm font-bold text-[#082653]">ดูสินค้าใหม่</Link></div>
+      <div className="mt-5 flex flex-wrap gap-2.5"><Link href="#products" className="inline-flex min-h-11 items-center gap-3 rounded-full bg-[#006cff] px-6 text-sm font-bold text-white shadow-[0_8px_18px_rgba(0,108,255,.22)]">เลือกซื้อสินค้า <ArrowRight className="size-4"/></Link><Link href="#new-arrivals" className="inline-flex min-h-11 items-center rounded-full border border-[#9fc5f4] bg-white/95 px-6 text-sm font-bold text-[#062755]">ดูสินค้าใหม่</Link></div>
       <p className="mt-5 text-xs font-bold text-[#46617f]">ครบเรื่องเรียน · พร้อมเรื่องงาน · จัดส่งทั่วไทย</p>
     </div>
   </div></section>;
