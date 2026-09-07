@@ -1,0 +1,1 @@
+export default function Loading(){return <div className="stack" role="status" aria-label="กำลังโหลดหน้า"><div className="skeleton"/><div className="grid3"><div className="skeleton"/><div className="skeleton"/><div className="skeleton"/></div></div>}

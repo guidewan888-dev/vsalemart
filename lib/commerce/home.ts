@@ -8,7 +8,7 @@ export async function getHomeData(): Promise<HomeData> {
   if (!url || !key) return fallback();
   const supabase = createClient(url, key, { auth: { persistSession: false } });
   const [productsResult, categoriesResult, promotionsResult, reviewsResult] = await Promise.allSettled([
-    supabase.from("products").select("id,slug,name,description,price,compare_at_price,cover_image,rating,review_count,sold_count,stock,badge,is_featured,is_flash_sale,is_demo,published_at,categories(slug,name)").eq("is_active", true).order("sold_count", { ascending: false }).limit(30),
+    supabase.from("products").select("id,slug,name,description,price,compare_at_price,cover_image,rating,review_count,sold_count,stock,badge,is_featured,is_flash_sale,is_demo,published_at,categories(slug,name)").eq("is_active", true).eq("is_demo", false).order("sold_count", { ascending: false }).limit(30),
     supabase.from("categories").select("id,slug,name,image_url").eq("is_active", true).order("sort_order"),
     supabase.from("promotions").select("id,title,subtitle,href,image_url,tone,priority,starts_at,ends_at").eq("is_active", true).order("priority"),
     supabase.from("reviews").select("id,author_initial,rating,excerpt,is_verified").eq("is_published", true).limit(3),
