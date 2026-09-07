@@ -24,7 +24,7 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from("products")
       .select(
-        "id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name),product_images(url,sort_order)",
+        "id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name)",
         { count: "exact" },
       )
       .eq("is_active", true)
@@ -54,10 +54,6 @@ export async function GET(request: NextRequest) {
         data: (data ?? []).map((row) => {
           const relation = row.categories as unknown;
           const productCategory = (Array.isArray(relation) ? relation[0] : relation) as { slug: string; name: string } | null;
-          const gallery = [...(row.product_images ?? [])].sort(
-            (a, b) => a.sort_order - b.sort_order,
-          );
-          const cleanImage = gallery.find((image) => image.sort_order > 0)?.url;
           return {
             id: row.id,
             slug: row.slug,
@@ -66,7 +62,7 @@ export async function GET(request: NextRequest) {
             price: Number(row.price),
             compareAtPrice: row.compare_at_price == null ? null : Number(row.compare_at_price),
             currency: "THB",
-            image: cleanImage || row.cover_image,
+            image: row.cover_image,
             stock: row.stock,
             isDemo: row.is_demo,
             badge: row.badge,

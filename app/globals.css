@@ -600,65 +600,25 @@ legend {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  padding: 30px 18px 38px;
+  padding: 10px;
 }
-.product-label {
-  display: inline-flex;
-  margin-bottom: 5px;
-  padding: 3px 7px;
-  border-radius: 5px;
-  background: var(--brand-soft);
+.product-img .badge {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+}
+.heart {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: 50%;
   color: var(--brand-strong);
-  font-size: 11px;
-  font-weight: 700;
-}
-.vsale-product-frame {
-  position: absolute;
-  inset: 6px;
-  z-index: 2;
-  border: 4px solid #7116b6;
-  border-radius: 5px;
-  pointer-events: none;
-}
-.frame-brand,
-.frame-authentic,
-.frame-ready {
-  position: absolute;
-  display: inline-flex;
-  align-items: center;
-  min-height: 24px;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: 0.02em;
-}
-.frame-brand {
-  top: -4px;
-  left: -4px;
-  padding: 0 11px;
-  border-radius: 3px 0 8px 0;
-  background: #231441;
-}
-.frame-authentic {
-  top: -4px;
-  right: -4px;
-  padding: 0 10px 0 14px;
-  border-radius: 0 3px 0 12px;
-  background: linear-gradient(135deg, #f44a31, #d71931);
-}
-.frame-ready {
-  right: -4px;
-  bottom: -4px;
-  min-width: 46%;
-  justify-content: center;
-  padding: 0 13px;
-  border-radius: 12px 0 3px 0;
-  background: linear-gradient(135deg, #c11e32, #ed2335);
-  font-size: 13px;
-}
-.frame-ready.sold-out {
-  background: #737984;
 }
 .product-info {
   padding: 14px;

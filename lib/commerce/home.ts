@@ -8,7 +8,7 @@ export async function getHomeData(): Promise<HomeData> {
   if (!url || !key) return fallback();
   const supabase = createClient(url, key, { auth: { persistSession: false } });
   const [productsResult, categoriesResult, promotionsResult, reviewsResult] = await Promise.allSettled([
-    supabase.from("products").select("id,slug,name,description,price,compare_at_price,cover_image,rating,review_count,sold_count,stock,badge,is_featured,is_flash_sale,is_demo,published_at,categories(slug,name),product_images(url,sort_order)").eq("is_active", true).eq("is_demo", false).order("sold_count", { ascending: false }).limit(30),
+    supabase.from("products").select("id,slug,name,description,price,compare_at_price,cover_image,rating,review_count,sold_count,stock,badge,is_featured,is_flash_sale,is_demo,published_at,categories(slug,name)").eq("is_active", true).eq("is_demo", false).order("sold_count", { ascending: false }).limit(30),
     supabase.from("categories").select("id,slug,name,image_url").eq("is_active", true).order("sort_order"),
     supabase.from("promotions").select("id,title,subtitle,href,image_url,tone,priority,starts_at,ends_at").eq("is_active", true).order("priority"),
     supabase.from("reviews").select("id,author_initial,rating,excerpt,is_verified").eq("is_published", true).limit(3),
@@ -22,9 +22,7 @@ export async function getHomeData(): Promise<HomeData> {
   const products: HomeProduct[] = productRows.map((row) => {
     const relation = row.categories as unknown;
     const category = (Array.isArray(relation) ? relation[0] : relation) as { slug?: string; name?: string } | null;
-    const gallery = [...(row.product_images ?? [])].sort((a, b) => a.sort_order - b.sort_order);
-    const cleanImage = gallery.find((image) => image.sort_order > 0)?.url;
-    return { id: row.id, slug: row.slug, name: row.name, description: row.description ?? "", categorySlug: category?.slug ?? "all", categoryName: category?.name ?? "สินค้า", price: Number(row.price), compareAtPrice: row.compare_at_price == null ? null : Number(row.compare_at_price), currency: "THB", rating: row.rating == null ? null : Number(row.rating), reviewCount: row.review_count, soldCount: row.sold_count, badge: row.badge, badgeLabel: badgeLabel(row.badge), image: { src: cleanImage || row.cover_image || "/images/vsale/products/demo/product-placeholder.svg", alt: row.name }, inStock: row.stock > 0, stock: row.stock, isFeatured: row.is_featured, isFlashSale: row.is_flash_sale, isDemo: row.is_demo, publishedAt: row.published_at ?? new Date().toISOString() };
+    return { id: row.id, slug: row.slug, name: row.name, description: row.description ?? "", categorySlug: category?.slug ?? "all", categoryName: category?.name ?? "สินค้า", price: Number(row.price), compareAtPrice: row.compare_at_price == null ? null : Number(row.compare_at_price), currency: "THB", rating: row.rating == null ? null : Number(row.rating), reviewCount: row.review_count, soldCount: row.sold_count, badge: row.badge, badgeLabel: badgeLabel(row.badge), image: { src: row.cover_image || "/images/vsale/products/demo/product-placeholder.svg", alt: row.name }, inStock: row.stock > 0, stock: row.stock, isFeatured: row.is_featured, isFlashSale: row.is_flash_sale, isDemo: row.is_demo, publishedAt: row.published_at ?? new Date().toISOString() };
   });
   const categories: HomeCategory[] = categoryRows?.length ? categoryRows.map((row) => ({ id: row.id, slug: row.slug, name: row.name, image: { src: row.image_url, alt: row.name } })) : demoCategories;
   const promotions: HomePromotion[] = promotionRows?.length ? promotionRows.map((row) => ({ id: row.id, title: row.title, subtitle: row.subtitle ?? undefined, href: row.href, image: { src: row.image_url, alt: row.title }, tone: row.tone, priority: row.priority, startsAt: row.starts_at ?? undefined, endsAt: row.ends_at ?? undefined })) : demoPromotions;
