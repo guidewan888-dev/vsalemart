@@ -133,14 +133,38 @@ export function Home() {
               <br />
               เลือกของที่ใช่สำหรับทุกวันของคุณ
             </p>
-            <Link href="/products" className="btn">
-              เลือกซื้อสินค้า
-            </Link>
+            <div className="hero-actions">
+              <Link href="/products" className="btn">
+                เลือกซื้อสินค้า
+              </Link>
+              <Link href="#home-promotions" className="btn secondary">
+                ดูชุดโปรโมชั่น
+              </Link>
+            </div>
           </div>
         </div>
         <BusinessBanner />
       </div>
       <Benefits />
+      {promotionItems.length > 0 && (
+        <section className="section promotion-showcase" id="home-promotions">
+          <div className="promotion-heading">
+            <div>
+              <p className="eyebrow">V SALE PICKS</p>
+              <h2>ชุดโปรโมชั่นพร้อมขาย</h2>
+              <p>สินค้าที่ร้านจัดชุดไว้ {promotionTotal.toLocaleString("th-TH")} รายการ</p>
+            </div>
+            <Link className="btn secondary" href="/promotions">
+              ดูโปรโมชั่นทั้งหมด →
+            </Link>
+          </div>
+          <div className="products">
+            {promotionItems.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+      )}
       <section className="section">
         <div className="section-head">
           <h2>ช้อปตามหมวดหมู่</h2>
@@ -158,25 +182,6 @@ export function Home() {
           onSelect={showCategory}
         />
       </section>
-      {promotionItems.length > 0 && (
-        <section className="section promotion-showcase" id="home-promotions">
-          <div className="promotion-heading">
-            <div>
-              <p className="eyebrow">V SALE PICKS</p>
-              <h2>โปรโมชั่นที่เลือกมาให้</h2>
-              <p>สินค้าพร้อมขายที่ร้านคัดไว้ {promotionTotal.toLocaleString("th-TH")} รายการ</p>
-            </div>
-            <Link className="btn secondary" href="/promotions">
-              ดูโปรโมชั่นทั้งหมด →
-            </Link>
-          </div>
-          <div className="products">
-            {promotionItems.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-      )}
       <section className="section home-products" id="home-products">
         <div className="section-head">
           <div>
