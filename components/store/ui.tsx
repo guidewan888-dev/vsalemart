@@ -18,7 +18,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { useState, type ReactNode } from "react";
+import { useEffect, useState, type ReactNode } from "react";
 import { useStore } from "./provider";
 import { accountNav, adminNav, money, statuses } from "@/lib/store/routes";
 import type { HomeProduct } from "@/types/commerce";
@@ -76,6 +76,12 @@ export function Shell({ children }: { children: ReactNode }) {
     admin = path.startsWith("/admin"),
     account = path.startsWith("/account");
   const { cart } = useStore();
+  useEffect(() => {
+    const frame = requestAnimationFrame(() =>
+      window.scrollTo({ top: 0, left: 0, behavior: "auto" }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [path]);
   if (admin) return <AdminShell>{children}</AdminShell>;
   return (
     <>
@@ -278,7 +284,7 @@ export function ProductCard({ product: p }: { product: HomeProduct }) {
   return (
     <article className="product">
       <div className="product-img">
-        <Link href={"/products/" + p.slug}>
+        <Link href={"/products/" + p.slug} scroll>
           <img src={p.image.src} alt={p.name} loading="lazy" />
         </Link>
         {p.badgeLabel && <span className="badge">{p.badgeLabel}</span>}
@@ -295,7 +301,7 @@ export function ProductCard({ product: p }: { product: HomeProduct }) {
         </button>
       </div>
       <div className="product-info">
-        <Link href={"/products/" + p.slug}>
+        <Link href={"/products/" + p.slug} scroll>
           <h3>{p.name}</h3>
         </Link>
         <div className="price">{money(p.price)}</div>

@@ -6,8 +6,89 @@ import { useStore, lineKey, databaseProduct } from "./provider";
 import { ProductCard, Benefits, BusinessBanner, Empty, Quantity } from "./ui";
 import { money } from "@/lib/store/routes";
 import type { HomeProduct } from "@/types/commerce";
+const HOME_PAGE_SIZE = 10;
+
 export function Home() {
   const { data } = useStore();
+  const [category, setCategory] = useState("");
+  const [page, setPage] = useState(1);
+  const [items, setItems] = useState(data.products.slice(0, HOME_PAGE_SIZE));
+  const [total, setTotal] = useState(data.products.length);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState("");
+  const selectedCategory = data.categories.find((c) => c.slug === category);
+  const demoProducts = category
+    ? data.products.filter((product) => product.categorySlug === category)
+    : data.products;
+  const visibleItems =
+    data.source === "demo"
+      ? demoProducts.slice(
+          (page - 1) * HOME_PAGE_SIZE,
+          page * HOME_PAGE_SIZE,
+        )
+      : items;
+  const visibleTotal = data.source === "demo" ? demoProducts.length : total;
+
+  useEffect(() => {
+    if (data.source === "demo") return;
+    const ctrl = new AbortController();
+    const timer = setTimeout(() => {
+      setBusy(true);
+      setError("");
+      fetch(
+        "/api/products?" +
+          new URLSearchParams({
+            category,
+            page: String(page),
+            limit: String(HOME_PAGE_SIZE),
+            sort: "popular",
+          }),
+        { signal: ctrl.signal },
+      )
+        .then((response) => response.json())
+        .then((result) => {
+          if (result.error) throw new Error(result.error);
+          setItems(result.data.map(convert));
+          setTotal(result.pagination.total);
+        })
+        .catch((caught) => {
+          if (caught.name !== "AbortError") setError(caught.message);
+        })
+        .finally(() => {
+          if (!ctrl.signal.aborted) setBusy(false);
+        });
+    }, 0);
+    return () => {
+      clearTimeout(timer);
+      ctrl.abort();
+    };
+  }, [category, page, data.products, data.source]);
+
+  function showCategory(slug: string) {
+    setCategory(slug);
+    setPage(1);
+    scrollHomeProducts();
+  }
+
+  function changePage(nextPage: number) {
+    setPage(nextPage);
+    scrollHomeProducts();
+  }
+
+  function scrollHomeProducts() {
+    requestAnimationFrame(() =>
+      document
+        .getElementById("home-products")
+        ?.scrollIntoView({
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+            .matches
+            ? "auto"
+            : "smooth",
+          block: "start",
+        }),
+    );
+  }
+
   return (
     <>
       <div className="hero">
@@ -39,17 +120,32 @@ export function Home() {
       <section className="section">
         <div className="section-head">
           <h2>ช้อปตามหมวดหมู่</h2>
-          <Link className="link small" href="/categories">
-            ดูทั้งหมด →
-          </Link>
+          <button
+            className="link small category-reset"
+            type="button"
+            onClick={() => showCategory("")}
+          >
+            แสดงสินค้าทั้งหมด →
+          </button>
         </div>
-        <Categories compact />
+        <Categories
+          compact
+          selectedCategory={category}
+          onSelect={showCategory}
+        />
       </section>
-      <section className="section">
+      <section className="section home-products" id="home-products">
         <div className="section-head">
           <div>
             <p className="eyebrow">EVERYDAY ESSENTIALS</p>
-            <h2>สินค้าแนะนำสำหรับคุณ</h2>
+            <h2>
+              {selectedCategory
+                ? `สินค้าในหมวด${selectedCategory.name}`
+                : "สินค้าแนะนำสำหรับคุณ"}
+            </h2>
+            <p className="small muted">
+              พบ {visibleTotal.toLocaleString("th-TH")} รายการ
+            </p>
           </div>
           <Link className="link small" href="/products">
             สินค้าทั้งหมด →
@@ -60,11 +156,31 @@ export function Home() {
             กำลังแสดงสินค้าตัวอย่าง ยังไม่ใช่รายการสำหรับสั่งซื้อจริง
           </p>
         )}
-        <div className="products">
-          {data.products.slice(0, 15).map((p) => (
-            <ProductCard key={p.id} product={p} />
-          ))}
-        </div>
+        {error && <p className="alert error">{error}</p>}
+        {busy ? (
+          <div className="products" aria-label="กำลังโหลดสินค้า">
+            {Array.from({ length: HOME_PAGE_SIZE }, (_, index) => (
+              <div className="skeleton" key={index} />
+            ))}
+          </div>
+        ) : visibleItems.length ? (
+          <div className="products">
+            {visibleItems.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <Empty
+            title="ยังไม่มีสินค้าในหมวดนี้"
+            description="ลองเลือกหมวดอื่นหรือดูสินค้าทั้งหมด"
+          />
+        )}
+        <Pagination
+          page={page}
+          total={visibleTotal}
+          pageSize={HOME_PAGE_SIZE}
+          onChange={changePage}
+        />
       </section>
       <section className="panel grid3">
         <div>
@@ -95,16 +211,21 @@ export function Home() {
     </>
   );
 }
-export function Categories({ compact = false }: { compact?: boolean }) {
+export function Categories({
+  compact = false,
+  selectedCategory = "",
+  onSelect,
+}: {
+  compact?: boolean;
+  selectedCategory?: string;
+  onSelect?: (slug: string) => void;
+}) {
   const { data } = useStore();
   return (
     <div className={compact ? "categories" : "grid3"}>
-      {data.categories.map((c) => (
-        <Link
-          className={compact ? "category" : "panel row"}
-          key={c.id}
-          href={"/products?category=" + c.slug}
-        >
+      {data.categories.map((c) => {
+        const content = (
+          <>
           <img
             src={c.image.src}
             alt=""
@@ -123,9 +244,67 @@ export function Categories({ compact = false }: { compact?: boolean }) {
             }
           />
           <span>{c.name}</span>
-        </Link>
-      ))}
+          </>
+        );
+        return onSelect ? (
+          <button
+            className={`category category-choice${selectedCategory === c.slug ? " active" : ""}`}
+            key={c.id}
+            type="button"
+            aria-pressed={selectedCategory === c.slug}
+            onClick={() => onSelect(c.slug)}
+          >
+            {content}
+          </button>
+        ) : (
+          <Link
+            className={compact ? "category" : "panel row"}
+            key={c.id}
+            href={"/products?category=" + c.slug}
+          >
+            {content}
+          </Link>
+        );
+      })}
     </div>
+  );
+}
+
+function Pagination({
+  page,
+  total,
+  pageSize,
+  onChange,
+}: {
+  page: number;
+  total: number;
+  pageSize: number;
+  onChange: (page: number) => void;
+}) {
+  const pages = Math.max(1, Math.ceil(total / pageSize));
+  if (pages <= 1) return null;
+  return (
+    <nav className="pagination" aria-label="หน้ารายการสินค้า">
+      <button
+        type="button"
+        className="btn ghost"
+        disabled={page === 1}
+        onClick={() => onChange(page - 1)}
+      >
+        ← ก่อนหน้า
+      </button>
+      <span>
+        หน้า <strong>{page}</strong> จาก {pages.toLocaleString("th-TH")}
+      </span>
+      <button
+        type="button"
+        className="btn ghost"
+        disabled={page >= pages}
+        onClick={() => onChange(page + 1)}
+      >
+        ถัดไป →
+      </button>
+    </nav>
   );
 }
 function convert(row: Record<string, unknown>): HomeProduct {
@@ -261,23 +440,36 @@ export function Catalog({
               }}
             />
           </label>
-          <label>
-            หมวดหมู่
-            <select
-              value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                setPage(1);
-              }}
-            >
-              <option value="">ทุกหมวดหมู่</option>
+          <fieldset className="filter-group">
+            <legend>หมวดหมู่</legend>
+            <div className="filter-options">
+              <button
+                type="button"
+                className={`filter-option${category === "" ? " active" : ""}`}
+                aria-pressed={category === ""}
+                onClick={() => {
+                  setCategory("");
+                  setPage(1);
+                }}
+              >
+                ทุกหมวดหมู่
+              </button>
               {data.categories.map((c) => (
-                <option key={c.id} value={c.slug}>
+                <button
+                  type="button"
+                  className={`filter-option${category === c.slug ? " active" : ""}`}
+                  aria-pressed={category === c.slug}
+                  key={c.id}
+                  onClick={() => {
+                    setCategory(c.slug);
+                    setPage(1);
+                  }}
+                >
                   {c.name}
-                </option>
+                </button>
               ))}
-            </select>
-          </label>
+            </div>
+          </fieldset>
           <label className="checklabel">
             <input
               type="checkbox"
@@ -302,9 +494,16 @@ export function Catalog({
       </aside>
       <div>
         <div className="toolbar">
-          <span className="small">
-            {favoritesOnly || data.source === "demo" ? visible.length : total}{" "}
-            รายการ
+          <span className="small toolbar-result">
+            <strong>
+              {favoritesOnly || data.source === "demo" ? visible.length : total}{" "}
+              รายการ
+            </strong>
+            {category && (
+              <span>
+                {data.categories.find((item) => item.slug === category)?.name}
+              </span>
+            )}
           </span>
           <label className="row">
             เรียงตาม
@@ -345,29 +544,12 @@ export function Catalog({
           />
         )}
         {!favoritesOnly && data.source === "supabase" && (
-          <nav
-            className="row"
-            style={{ marginTop: 24 }}
-            aria-label="หน้ารายการสินค้า"
-          >
-            <button
-              className="btn ghost"
-              disabled={page === 1}
-              onClick={() => setPage((p) => p - 1)}
-            >
-              ก่อนหน้า
-            </button>
-            <span>
-              หน้า {page} / {Math.max(1, Math.ceil(total / 24))}
-            </span>
-            <button
-              className="btn ghost"
-              disabled={page * 24 >= total}
-              onClick={() => setPage((p) => p + 1)}
-            >
-              ถัดไป
-            </button>
-          </nav>
+          <Pagination
+            page={page}
+            total={total}
+            pageSize={24}
+            onChange={setPage}
+          />
         )}
       </div>
     </div>
