@@ -15,5 +15,5 @@ export const metadata: Metadata = {
   robots: { index: true, follow: true },
 };
 
-export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#146ef5" };
+export const viewport: Viewport = { width: "device-width", initialScale: 1, viewportFit: "cover", themeColor: "#ff6b00" };
 export default function RootLayout({ children }: { children: React.ReactNode }) { return <html lang="th" className={`${notoThai.variable} ${plexThai.variable}`}><body>{children}</body></html>; }
