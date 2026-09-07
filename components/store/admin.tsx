@@ -278,8 +278,13 @@ const settingsFields: Field[] = [
   { key: "bank_account", label: "เลขบัญชีรับเงิน", required: true },
   { key: "bank_holder", label: "ชื่อบัญชี", required: true },
   {
+    key: "vat_registered",
+    label: "จดทะเบียนภาษีมูลค่าเพิ่ม (VAT)",
+    type: "checkbox",
+  },
+  {
     key: "vat_rate",
-    label: "อัตรา VAT ที่ร้านใช้ (%)",
+    label: "อัตรา VAT (%) — ใส่ 0 หากยังไม่ได้จด VAT",
     type: "number",
     required: true,
   },
@@ -312,7 +317,7 @@ export function Settings() {
           fields={settingsFields}
           initial={data?.data ?? {}}
           onSave={async (v) => {
-            await api("admin/settings", { ...v, vat_registered: true });
+            await api("admin/settings", v);
           }}
         />
       </div>
