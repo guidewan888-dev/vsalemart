@@ -371,6 +371,12 @@ async function handle(
         req.nextUrl.searchParams.get("promotion") === "true"
       )
         query = query.eq("is_flash_sale", true);
+      if (
+        admin &&
+        name === "products" &&
+        req.nextUrl.searchParams.get("storefront") === "true"
+      )
+        query = query.eq("is_demo", false);
       const search = req.nextUrl.searchParams
         .get("q")
         ?.replace(/[%_]/g, "")

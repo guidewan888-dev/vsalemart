@@ -15,6 +15,7 @@ export async function GET(request: NextRequest) {
   const limit = positiveInteger(request.nextUrl.searchParams.get("limit"), DEFAULT_LIMIT, MAX_LIMIT);
   const search = request.nextUrl.searchParams.get("q")?.trim().slice(0, 120);
   const category = request.nextUrl.searchParams.get("category")?.trim().slice(0, 80);
+  const promotionsOnly = request.nextUrl.searchParams.get("promotion") === "true";
   const from = (page - 1) * limit;
   const to = from + limit - 1;
 
@@ -39,7 +40,7 @@ export async function GET(request: NextRequest) {
             .order("name", { ascending: true });
     if (request.nextUrl.searchParams.get("inStock") === "true")
       query = query.gt("stock", 0);
-    if (request.nextUrl.searchParams.get("promotion") === "true")
+    if (promotionsOnly)
       query = query.eq("is_flash_sale", true);
     if (search) query = query.ilike("name", `%${search.replaceAll("%", "").replaceAll("_", "")}%`);
     if (category) query = query.eq("categories.slug", category);
@@ -79,7 +80,13 @@ export async function GET(request: NextRequest) {
         }),
         pagination: { page, limit, total, pages: Math.ceil(total / limit) },
       },
-      { headers: { "Cache-Control": "public, s-maxage=300, stale-while-revalidate=600" } },
+      {
+        headers: {
+          "Cache-Control": promotionsOnly
+            ? "public, max-age=0, s-maxage=0, must-revalidate"
+            : "public, s-maxage=300, stale-while-revalidate=600",
+        },
+      },
     );
   } catch (error) {
     console.error("Catalog API error", error);

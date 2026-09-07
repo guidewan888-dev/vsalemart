@@ -489,6 +489,7 @@ export function PromotionManagement() {
     page +
     "&q=" +
     encodeURIComponent(q) +
+    "&storefront=true" +
     (mode === "active" ? "&promotion=true" : "");
   const { data, error, busy, reload } = useData(path);
   const rows = data?.data ?? [];
