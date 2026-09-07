@@ -114,7 +114,10 @@ export function Categories({ compact = false }: { compact?: boolean }) {
                 : {
                     width: 100,
                     height: 100,
-                    objectFit: "cover",
+                    objectFit: "contain",
+                    objectPosition: "center",
+                    padding: 6,
+                    background: "#fff8f3",
                     borderRadius: 10,
                   }
             }
