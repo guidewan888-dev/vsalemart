@@ -25,9 +25,9 @@ export function ProductCard({ product }: { product: HomeProduct }) {
   const liked = favorites.has(product.id);
   const artTone = artTones[product.categorySlug] ?? "from-[#eaf4ff] to-[#d2e7ff]";
 
-  return <m.article data-product-card className="group flex h-full min-w-0 flex-col overflow-hidden rounded-2xl border border-[#dfe8f5] bg-white shadow-[0_5px_16px_rgba(16,52,101,.06)]" whileHover={{ y: -3 }} transition={{ duration: 0.18 }}>
+  return <m.article data-product-card className="group flex h-full min-w-0 flex-col overflow-hidden rounded-[18px] border border-white bg-white shadow-[0_7px_20px_rgba(20,55,102,.09)] ring-1 ring-[#dce8f6]/70" whileHover={{ y: -4 }} transition={{ duration: 0.18 }}>
     <div className={`relative aspect-[4/3] overflow-hidden bg-gradient-to-br ${artTone}`}>
-      {product.badgeLabel && <span className="absolute left-2 top-2 z-10 rounded-full bg-[#ff5148] px-2.5 py-1 text-[10px] font-bold text-white">{product.badgeLabel}</span>}
+      {product.badgeLabel && <span className="absolute left-2 top-2 z-10 rounded-full bg-[#ff4361] px-2.5 py-1 text-[10px] font-black text-white shadow-sm">{product.badgeLabel}</span>}
       <button type="button" onClick={() => toggleFavorite(product.id)} aria-label={liked ? `นำ ${product.name} ออกจากรายการโปรด` : `เพิ่ม ${product.name} ในรายการโปรด`} aria-pressed={liked} className="absolute right-2 top-2 z-10 grid size-11 place-items-center rounded-full border border-[#dce6f4] bg-white/95 text-[#092653] shadow-sm sm:size-9">
         <Heart className={`size-4 ${liked ? "fill-[#ff5148] text-[#ff5148]" : ""}`}/>
       </button>
@@ -36,19 +36,14 @@ export function ProductCard({ product }: { product: HomeProduct }) {
       {!product.inStock && <div className="absolute inset-0 z-20 grid place-items-center bg-white/80"><span className="rounded-full bg-[#092653] px-3 py-1.5 text-xs font-bold text-white">สินค้าหมด</span></div>}
     </div>
     <div className="flex flex-1 flex-col p-3">
-      <p className="truncate text-[10px] font-medium text-[#6b7d98]">{product.categoryName}</p>
-      <h3 className="mt-1 line-clamp-2 min-h-[2.75rem] text-[14px] font-bold leading-[1.55] text-[#0a2348]">{product.name}</h3>
+      <p className="truncate text-[10px] font-bold text-[#55749d]">{product.categoryName}</p>
+      <h3 className="mt-1 line-clamp-2 min-h-[2.6rem] text-[13px] font-extrabold leading-[1.5] text-[#092653]">{product.name}</h3>
       <div className="mt-2 flex flex-wrap items-baseline gap-x-1.5" aria-label={`ราคาปัจจุบัน ${money.format(product.price)}${product.compareAtPrice ? ` ราคาเดิม ${money.format(product.compareAtPrice)}` : ""}`}>
-        <strong className="text-lg font-extrabold tracking-tight text-[#ff4238]">{money.format(product.price)}</strong>
+        <strong className="text-lg font-black tracking-tight text-[#f23856]">{money.format(product.price)}</strong>
         {product.compareAtPrice && <del className="text-[10px] text-[#8995a7]">{money.format(product.compareAtPrice)}</del>}
         {discount > 0 && <span className="text-[9px] font-bold text-[#e43830]">-{discount}%</span>}
       </div>
-      <div className="mt-auto flex items-center justify-between gap-2 pt-2">
-        <div className="truncate text-[11px] font-medium text-[#66758d]"><span className="text-[#f3a400]">★</span> {product.rating?.toFixed(1) ?? "–"} · ขายแล้ว {formatCount(product.soldCount)}</div>
-        <button type="button" disabled={!product.inStock} onClick={() => addToCart(product)} aria-label={`เพิ่ม ${product.name} ลงตะกร้า`} className="grid size-11 shrink-0 place-items-center rounded-full border border-[#cbdcf4] bg-white text-[#0872f5] hover:border-[#0872f5] hover:bg-[#0872f5] hover:text-white disabled:cursor-not-allowed disabled:text-[#a8b3c3] sm:size-9">
-          <ShoppingCart className="size-4"/>
-        </button>
-      </div>
+      <div className="mt-auto pt-2"><div className="truncate text-[10px] font-semibold text-[#66758d]"><span className="text-[#f3a400]">★</span> {product.rating?.toFixed(1) ?? "–"} · ขายแล้ว {formatCount(product.soldCount)}</div><button type="button" disabled={!product.inStock} onClick={() => addToCart(product)} aria-label={`เพิ่ม ${product.name} ลงตะกร้า`} className="mt-2 inline-flex min-h-9 w-full items-center justify-center gap-1.5 rounded-xl bg-[#0872f5] px-2 text-[11px] font-extrabold text-white shadow-[0_5px_12px_rgba(8,114,245,.18)] hover:bg-[#005edb] disabled:cursor-not-allowed disabled:bg-[#e7edf5] disabled:text-[#8996a8]"><ShoppingCart className="size-3.5"/>{product.inStock ? "เพิ่มลงตะกร้า" : "สินค้าหมด"}</button></div>
     </div>
   </m.article>;
 }

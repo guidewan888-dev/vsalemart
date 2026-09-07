@@ -1,7 +1,7 @@
 "use client";
 
 import { ArrowLeft, ArrowRight, Flame, Search, SlidersHorizontal } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import type { HomeCategory, HomeProduct } from "@/types/commerce";
 import { EmptyState, ProductCard } from "@/components/commerce/product-card";
 
@@ -13,13 +13,21 @@ export function ProductSection({ id, title, products, subtitle }: { id: string; 
   const rail = useRef<HTMLDivElement>(null);
   const scroll = (direction: number) => rail.current?.scrollBy({ left: direction * Math.min(rail.current.clientWidth * 0.86, 1000), behavior: "smooth" });
   if (!products.length) return <EmptyState/>;
+  const themes: Record<string, { shell: string; bar: string; label: string }> = {
+    "best-sellers": { shell: "bg-[#fff8d9]", bar: "bg-[#ffb800]", label: "ฮิตที่สุด" },
+    bundles: { shell: "bg-[#e5fbf3]", bar: "bg-[#16bd8a]", label: "คุ้มเป็นชุด" },
+    "new-arrivals": { shell: "bg-[#eaf4ff]", bar: "bg-[#0872f5]", label: "เพิ่งมา" },
+  };
+  const theme = themes[id] ?? { shell: "bg-[#f4f7ff]", bar: "bg-[#7b53ed]", label: "เลือกช้อป" };
 
-  return <section id={id} className="compact-section mx-auto max-w-[1320px] px-4 md:px-6">
+  return <section id={id} className="compact-section mx-auto max-w-[1200px] px-4 md:px-0">
+    <div className={`overflow-hidden rounded-[24px] ${theme.shell} px-4 py-5 md:px-5`}>
     <div className="mb-4 flex items-end justify-between gap-3">
-      <div className="min-w-0 sm:flex sm:items-baseline sm:gap-3"><h2 className="text-[clamp(1.6rem,2.7vw,2.15rem)] font-extrabold leading-tight tracking-[-.03em] text-[#092653]">{title}</h2>{subtitle && <p className="mt-1 text-xs text-[#62738b] sm:mt-0 sm:text-sm">{subtitle}</p>}</div>
+      <div className="min-w-0"><span className={`inline-flex rounded-full ${theme.bar} px-2.5 py-1 text-[10px] font-black text-white`}>{theme.label}</span><h2 className="mt-1.5 text-[clamp(1.6rem,2.7vw,2.15rem)] font-black leading-tight tracking-[-.03em] text-[#092653]">{title}</h2>{subtitle && <p className="mt-0.5 text-xs text-[#62738b] sm:text-sm">{subtitle}</p>}</div>
       <div className="flex shrink-0 gap-2"><button onClick={() => scroll(-1)} className="grid size-11 place-items-center rounded-full border border-[#cddbf0] bg-white text-[#092653] hover:border-[#0872f5] hover:text-[#0872f5] sm:size-9" aria-label="ดูก่อนหน้า"><ArrowLeft className="size-4"/></button><button onClick={() => scroll(1)} className="grid size-11 place-items-center rounded-full border border-[#cddbf0] bg-white text-[#0872f5] hover:bg-[#0872f5] hover:text-white sm:size-9" aria-label="ดูถัดไป"><ArrowRight className="size-4"/></button></div>
     </div>
-    <div ref={rail} className="product-rail -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-3 md:-mx-6 md:px-6">{products.map((product) => <div key={product.id} className="w-[44vw] max-w-[205px] shrink-0 snap-start sm:w-[30vw] md:w-[24vw] lg:w-[19vw] xl:w-[205px]"><ProductCard product={product}/></div>)}</div>
+    <div ref={rail} className="product-rail -mx-4 flex snap-x gap-3 overflow-x-auto px-4 pb-1 md:-mx-5 md:px-5">{products.map((product) => <div key={product.id} className="w-[44vw] max-w-[188px] shrink-0 snap-start sm:w-[30vw] md:w-[24vw] lg:w-[176px]"><ProductCard product={product}/></div>)}</div>
+    </div>
   </section>;
 }
 
@@ -32,8 +40,5 @@ export function ProductExplorer({ products, categories }: { products: HomeProduc
 }
 
 export function FlashSaleSection({ products }: { products: HomeProduct[] }) {
-  const [seconds, setSeconds] = useState(8 * 60 * 60 + 24 * 60 + 16);
-  useEffect(() => { const timer = window.setInterval(() => setSeconds((value) => Math.max(value - 1, 0)), 1000); return () => window.clearInterval(timer); }, []);
-  const time = [Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60), seconds % 60];
-  return <section id="flash-sale" className="compact-section px-4 md:px-6"><div className="flash-shell relative mx-auto max-w-[1320px] overflow-hidden rounded-2xl p-5 text-white md:p-7"><div className="mb-5 flex flex-wrap items-end justify-between gap-3"><div><p className="inline-flex items-center gap-1 rounded-full bg-[#ff5148] px-2.5 py-1 text-[10px] font-bold tracking-wider"><Flame className="size-3"/>FLASH SALE</p><h2 className="mt-2 text-3xl font-extrabold">ดีลเด่น ราคาน่าโดน</h2></div><div className="flex gap-1.5" aria-label={`เหลือเวลา ${time[0]} ชั่วโมง ${time[1]} นาที ${time[2]} วินาที`}>{time.map((value, index) => <span key={index} className="grid size-10 place-items-center rounded-lg bg-white text-sm font-extrabold text-[#092653]">{String(value).padStart(2, "0")}</span>)}</div></div><div className="grid gap-3 sm:grid-cols-3">{products.slice(0, 3).map((product) => <ProductCard key={product.id} product={product}/>)}</div></div></section>;
+  return <section id="flash-sale" className="compact-section px-4 md:px-6"><div className="flash-shell relative mx-auto max-w-[1200px] overflow-hidden rounded-[26px] p-4 text-white shadow-[0_18px_45px_rgba(231,47,80,.18)] md:p-6"><span className="absolute -right-12 -top-20 size-56 rounded-full bg-[#ffd83d]/30"/><span className="absolute right-28 top-2 size-20 rounded-full border-[14px] border-white/10"/><div className="relative mb-4 flex flex-wrap items-end justify-between gap-3"><div><p className="inline-flex items-center gap-1 rounded-full bg-[#ffd83d] px-2.5 py-1 text-[10px] font-black tracking-wider text-[#17345d]"><Flame className="size-3"/>FLASH SALE</p><h2 className="mt-2 text-3xl font-black tracking-tight md:text-4xl">โปรมาแล้ว ช้อปได้เลย</h2><p className="mt-1 text-xs font-medium text-white/85 md:text-sm">ราคาพิเศษช่วงนี้ จนกว่าสินค้าจะหมด</p></div><a href="#promotions" className="inline-flex min-h-10 items-center gap-2 rounded-full bg-white px-4 text-xs font-black text-[#e93455]">ดูโปรทั้งหมด <ArrowRight className="size-4"/></a></div><div className="relative grid grid-cols-2 gap-3 lg:grid-cols-4">{products.slice(0, 4).map((product) => <ProductCard key={product.id} product={product}/>)}</div></div></section>;
 }
