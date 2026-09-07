@@ -23,16 +23,19 @@ export async function GET(request: NextRequest) {
     let query = supabase
       .from("products")
       .select(
-        "id,slug,name,description,price,compare_at_price,cover_image,stock,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name)",
+        "id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name)",
         { count: "exact" },
       )
       .eq("is_active", true)
-      .gt("stock", 0)
       .order("is_featured", { ascending: false })
       .order("stock", { ascending: false })
       .order("name", { ascending: true })
       .range(from, to);
 
+    const sort=request.nextUrl.searchParams.get('sort');
+    if(sort==='price-asc'||sort==='price-desc') query=supabase.from('products').select('id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories!inner(slug,name)',{count:'exact'}).eq('is_active',true).order('price',{ascending:sort==='price-asc'}).range(from,to);
+    if(request.nextUrl.searchParams.get('inStock')==='true')query=query.gt('stock',0);
+    if(request.nextUrl.searchParams.get('promotion')==='true')query=query.eq('is_flash_sale',true);
     if (search) query = query.ilike("name", `%${search.replaceAll("%", "").replaceAll("_", "")}%`);
     if (category) query = query.eq("categories.slug", category);
 
@@ -55,6 +58,7 @@ export async function GET(request: NextRequest) {
             currency: "THB",
             image: row.cover_image,
             stock: row.stock,
+            isDemo: row.is_demo,
             badge: row.badge,
             featured: row.is_featured,
             flashSale: row.is_flash_sale,

@@ -11,7 +11,7 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
     let query = supabase
       .from("products")
       .select(
-        "id,slug,name,description,price,compare_at_price,cover_image,stock,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories(slug,name),product_images(url,alt_text,sort_order),product_variants(id,source_variant_id,name,sku,price,stock,gtin,weight_kg,length_cm,width_cm,height_cm,minimum_purchase_quantity,maximum_purchase_quantity,shipping_options)",
+        "id,slug,name,description,price,compare_at_price,cover_image,stock,is_demo,badge,is_featured,is_flash_sale,source,source_product_id,source_url,parent_sku,category_path,preparation_days,synced_at,categories(slug,name),product_images(url,alt_text,sort_order),product_variants(id,source_variant_id,name,sku,price,stock,gtin,weight_kg,length_cm,width_cm,height_cm,minimum_purchase_quantity,maximum_purchase_quantity,shipping_options)",
       )
       .eq("is_active", true);
 
@@ -37,6 +37,7 @@ export async function GET(_request: NextRequest, context: { params: Promise<{ id
           coverImage: data.cover_image,
           images: images.map((image) => ({ url: image.url, alt: image.alt_text, order: image.sort_order })),
           stock: data.stock,
+          isDemo: data.is_demo,
           badge: data.badge,
           featured: data.is_featured,
           flashSale: data.is_flash_sale,
