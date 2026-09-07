@@ -6,7 +6,7 @@ import { useStore, lineKey, databaseProduct } from "./provider";
 import { ProductCard, Benefits, BusinessBanner, Empty, Quantity } from "./ui";
 import { money } from "@/lib/store/routes";
 import type { HomeProduct } from "@/types/commerce";
-const HOME_PAGE_SIZE = 10;
+const HOME_PAGE_SIZE = 50;
 
 export function Home() {
   const { data } = useStore();
