@@ -280,7 +280,6 @@ export function Shell({ children }: { children: ReactNode }) {
   );
 }
 export function ProductCard({ product: p }: { product: HomeProduct }) {
-  const { favorites, favorite } = useStore();
   return (
     <article className="product">
       <div className="product-img">
@@ -288,17 +287,6 @@ export function ProductCard({ product: p }: { product: HomeProduct }) {
           <img src={p.image.src} alt={p.name} loading="lazy" />
         </Link>
         {p.badgeLabel && <span className="badge">{p.badgeLabel}</span>}
-        <button
-          className="heart"
-          onClick={() => favorite(p.id)}
-          aria-label={"บันทึก " + p.name}
-          aria-pressed={favorites.includes(p.id)}
-        >
-          <Heart
-            size={17}
-            fill={favorites.includes(p.id) ? "currentColor" : "none"}
-          />
-        </button>
       </div>
       <div className="product-info">
         <Link href={"/products/" + p.slug} scroll>

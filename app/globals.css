@@ -607,19 +607,6 @@ legend {
   bottom: 8px;
   left: 8px;
 }
-.heart {
-  position: absolute;
-  top: 9px;
-  right: 9px;
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  background: white;
-  border: 1px solid var(--line);
-  border-radius: 50%;
-  color: var(--brand-strong);
-}
 .product-info {
   padding: 14px;
 }
